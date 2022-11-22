@@ -1,0 +1,13 @@
+sl4lab@sl4lab-HP-ProDesk-400-G1-SFF:~/Documents/DLL$ javac TestJNI.java 
+sl4lab@sl4lab-HP-ProDesk-400-G1-SFF:~/Documents/DLL$ javah -jni TestJNI
+sl4lab@sl4lab-HP-ProDesk-400-G1-SFF:~/Documents/DLL$ gcc -fpic -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux -o libcal.so  -shared TestJNI.c
+sl4lab-HP-ProDesk-400-G1-SFF:~/Documents/DLL$ java -Djava.library.path=. TestJNI
+********************************
+1.Addition
+2.subtraction
+3.Multiplication
+4.Division
+5.Exit
+********************************
+Enter Your Choice :
+

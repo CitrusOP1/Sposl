@@ -1,91 +1,53 @@
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
+//FCFS Scheduling.
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class FCFS {
 
-    private Scanner sc;
+	private Scanner sc;
 
-    public void execute() {
-        sc = new Scanner(System.in);
-        System.out.println("Enter Number of Pages:");
-        int numPages = sc.nextInt();
-        int pages[] = new int[numPages];
-        System.out.println("Enter Reference String: ");
-        for (int i = 0; i < numPages; i++) {
-            pages[i] = sc.nextInt();
-        }
+	public void  execute()
+	{
+		sc = new Scanner(System.in);
 
-        System.out.println("Enter Number of Frames");
-        int capacity = sc.nextInt();
+		//--------FCFS
+		System.out.println("Enter Number of Processes:");
+		int numProcess=sc.nextInt();
+		Process []process=new Process[numProcess];
 
-        // To represent set of current pages
-        HashSet<Integer> frames = new HashSet<>(capacity);
+		//Accept Input
+		for(int i=0;i<numProcess;i++)
+		{
+			System.out.println("P("+(i+1)+"):Enter Arrival time & Burst time");
+			int at=sc.nextInt();
+			int bt=sc.nextInt();
+			//System.out.println("P("+(i+1)+"):Enter Arrival time");
 
-        // To store pages o=in FIFO manner
-        Queue<Integer> index = new LinkedList<>();
-        int pageFaults = 0;
-        int hits = 0;
-        for (int i = 0; i < numPages; i++) {
-            if (frames.size() < capacity) // check if set can hold n=more pages
-            {
-                // IF page not present insert into set and increment pagefault
-                if (!frames.contains(pages[i])) {
-                    frames.add(pages[i]);
-                    index.add(pages[i]); // push current page into queue
-                    pageFaults++;
-                    // System.out.println(pageFaults);
-                    // frames.forEach(System.out::print);
-                    for (int j : index)
-                        System.out.print(j + "\t");
-                    System.out.println();
-                } else {
-                    hits++;
-                }
-            } else // set is full,need replacement
-            {
-                if (!frames.contains(pages[i])) // frame is not present present
-                {
-                    int val = index.peek();
-                    index.poll();
-                    frames.remove(val);
+			process[i]=new Process("P"+(i+1), bt, at);
+		}
 
-                    frames.add(pages[i]);
-                    index.add(pages[i]);
-                    pageFaults++;
-                    for (int j : index)
-                        System.out.print(j + "\t");
-                    System.out.println();
-                } else // frame is present in set
-                {
-                    hits++;
-                }
-            }
-        }
+		//Sorting processes according to Arrival Time //No need if you take AT=0 or in ascending order
+		Arrays.sort(process,new SortByArrival());
 
-        System.out.println("Number of Page Faults : " + pageFaults);
-        System.out.println("Hits:\t" + hits);
-        System.out.println("hit ratio: " + ((double) hits / (double) numPages));
+		int sum=0;
+		double TotalWT=0,TotalTAT=0,avgWT=0,avgTAT=0;
+		System.out.println("\n\nPRNo\tBT\tAT\tCT\tTAT\tWT");
+		System.out.println("============================================================================================");
+		for(int i=0;i<numProcess;i++)
+		{
+			sum=process[i].CT=sum+process[i].BT; //process 1 CT= sum=0+24=24+3=27
+			process[i].TAT=process[i].CT-process[i].AT;//process 1TAT=27-0=27
+			process[i].WT=process[i].TAT-process[i].BT;//Process 1 WT=27-3=24
 
-    }
+			TotalWT=TotalWT+process[i].WT;
+			TotalTAT=TotalTAT+process[i].TAT;
+
+			process[i].display();
+		}
+		avgTAT=(double)TotalTAT/numProcess;
+		avgWT=(double)TotalWT/numProcess;
+		System.out.println("Average Waiting Time"+avgWT);
+		System.out.println("Average TAT="+avgTAT);
+	}
+
 }
-/*
- * Enter Number of Pages:
- * 12
- * 2 3 2 1 5 2 4 5 3 2 5 2
- * Enter Number of Frames
- * 3
- * 1
- * 2
- * 3
- * 4
- * 5
- * 6
- * 7
- * 8
- * 9
- * Number of Page Faults : 9
- * Hits: 3
- * hit ratio: 0.25
- */
